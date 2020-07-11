@@ -93,7 +93,7 @@ class Player:
         if self.isBot:
             self.avatar = Image.open("PNG/bot.jpg")
         else:
-            with requests.get(player.user.avatar_url) as r:
+            with requests.get(self.user.avatar_url) as r:
                 img_data = r.content
             with open('image_name.jpg', 'wb') as handler:
                 handler.write(img_data)
