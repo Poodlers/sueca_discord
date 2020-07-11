@@ -34,18 +34,18 @@ deck = ["2O","3O","4O","5O","6O","7O","QO","JO","KO","AO",
         "2C","3C","4C","5C","6C","7C","QC","JC","KC","AC",
         "2P","3P","4P","5P","6P","7P","QP","JP","KP","AP"]
 
-
 cards_value = {"1": -1, "2":0, "3":0.1 , "4":0.2, "5":0.3, "6":0.4, "7":10, "Q":2,"J":3, "K":4, "A":11
     }
 bot_names = ["Liam","Noah","William","James","Logan","Benjamin","Mason","Elijah","Oliver","Jacob","Lucas","Michael","Alexander","Ethan","Daniel","Matthew","Aiden","Henry","Joseph","Jackson"]
-games = {}
-game_ = []
+games = {} #dict matching players with games
+game_ = [] #list for all the game objects
+
 #perms for the sueca channels
 perm1 = PermissionOverwrite()
-perm1.read_messages = False
+perm1.read_messages = False #for everyone in the server
 perm2 = PermissionOverwrite()
-perm2.read_messages = True
-perm3 = PermissionOverwrite()
+perm2.read_messages = True #for the user
+perm3 = PermissionOverwrite() #for the bot, so he can eliminate the text channel
 perm3.manage_channels = True
 perm3.read_messages = True
 
@@ -90,6 +90,14 @@ class Player:
         self.user = user
         self.isBot = isBot
         self.play = ""
+        if self.isBot:
+            self.avatar = Image.open("PNG/bot.jpg")
+        else:
+            with requests.get(player.user.avatar_url) as r:
+                img_data = r.content
+            with open('image_name.jpg', 'wb') as handler:
+                handler.write(img_data)
+            self.avatar = Image.open('image_name.jpg')
     def add_channel(self,channel):
         self.channel = channel
     def make_play(self,play):
@@ -117,7 +125,7 @@ async def continue_play(player_game):
                 embed_draw = Embed(title = "It's a draw! What a shame!")
                 if player_game.points_green > player_game.points_blue:
                     embed_win_green = Embed(title = "It's an epic win for green team! Congrats guys!",value = "Green team has come out on top with {} points, while blue team scored only {} points!".format(player_game.points_green,player_game.points_blue))
-                    await player_game.channel.send(embed = embed_green_win)
+                    await player_game.channel.send(embed = embed_win_green)
                 elif player_game.points_blue > player_game.points_green:
                     embed_blue_win = Embed(title = "It's an epic win for blue team! Yay! So much win!",value = "Blue team has come out on top with {} points, while green team scored only {} points!".format(player_game.points_blue,player_game.points_green))
                     await player_game.channel.send(embed = embed_blue_win)
@@ -229,9 +237,10 @@ async def sueca(ctx):
         await channel.set_permissions(guild.default_role, overwrite=perm1)
         await channel.set_permissions(player.user, overwrite=perm2)
         await channel.set_permissions(guild.me, overwrite=perm3)
+        await channel.set_permissions(guild.owner, overwrite=perm1)
         print("Created the new channel!")
         player.add_channel(channel)
-        await channel.send("{}".format(user.mention))
+        await channel.send("{}".format(player.user.mention))
         await channel.send(embed = embed_player)
         image_path = create_hand_image(player.cards)
         await channel.send(file = File(image_path))
@@ -345,7 +354,7 @@ def create_hand_image(cards):
         img_temp = Image.open("./PNG/{}.png".format(card[0] + translation[card[1]]))
         dst.paste(img_temp,(acc_width,0))
         d = ImageDraw.Draw(dst)
-        d.text((acc_width + img_temp.width - 100 ,10),str(i),font = fnt,fill = (0,0,0))
+        d.text((acc_width + img_temp.width - 110 ,10),str(i),font = fnt,fill = (0,95,255))
         acc_width += img_temp.width
         i += 1
 
@@ -370,28 +379,28 @@ def create_board_image(game):
             card = Image.open("PNG/default.jpg").resize((card_width,card_height))
         if player.isBot:
             names.append("Bot {}".format(player.user))
-            image = Image.open("PNG/bot.jpg").resize((avatar_width,avatar_height))
-            images.append([image,card])
         else:
             names.append(player.user.name)
-            with requests.get(player.user.avatar_url) as r:
-                img_data = r.content
-            with open('image_name.jpg', 'wb') as handler:
-                handler.write(img_data)
-            images.append([Image.open("image_name.jpg").resize((avatar_width,avatar_height)),card])
+        images.append([player.avatar.resize((avatar_width,avatar_height)),card])
 
-    dst = Image.new('RGB', (1920,1080),(0,128,0))
+    dst = Image.new('RGB', (1920,1080),(190,190,190))
+    rect_green = Image.new("RGB", (20,avatar_height), (0,153,0))
+    rect_blue = Image.new("RGB", (20,avatar_height), (51,51,255))
     dst.paste(images[0][0],(30,dst.height//2 - avatar_height//2))
+    dst.paste(rect_green,(10,dst.height//2 - avatar_height//2))
     dst.paste(images[0][1],(50 + avatar_width, dst.height//2 - avatar_height//2))
     dst.paste(images[1][0],(dst.width//2 + avatar_width//2,70))
+    dst.paste(rect_blue,(dst.width//2 + avatar_width//2 - 20,70))
     dst.paste(images[1][1],(dst.width//2 - card_width//2, 70))
     dst.paste(images[2][0],(dst.width - avatar_width - 30,dst.height// 2 - avatar_height //2))
-    dst.paste(images[2][1],(dst.width - avatar_width - card_width - 60, dst.height// 2 - avatar_height //2))
+    dst.paste(rect_green,(dst.width - avatar_width - 50,dst.height// 2 - avatar_height //2))
+    dst.paste(images[2][1],(dst.width - avatar_width - card_width - 70, dst.height// 2 - avatar_height //2))
     dst.paste(images[3][0],(dst.width//2 - avatar_width - 150,dst.height - avatar_height - 10))
+    dst.paste(rect_blue,(dst.width//2 - avatar_width - 170,dst.height - avatar_height - 10))
     dst.paste(images[3][1],(dst.width//2 - card_width//2, dst.height - card_height - 10))
     d = ImageDraw.Draw(dst)
     d.text((10,20),"Green Team Points:{}".format(game.points_green),fill = (0,0,0),font = fnt)
-    d.text((dst.width - 600,dst.height - 60),"Blue Team Points:{}".format(game.points_blue),fill = (0,0,0),font = fnt)
+    d.text((dst.width - 550,dst.height - 60),"Blue Team Points:{}".format(game.points_blue),fill = (0,0,0),font = fnt)
     d.text((10,dst.height // 2 - avatar_height//2 - 70),names[0],font = fnt,fill = (0,0,0))
     d.text((dst.width//2 + avatar_width//2 + 10,10), names[1],font = fnt,fill = (0,0,0))
     d.text((dst.width - avatar_width - 40,dst.height//2 - avatar_height//2 - 75), names[2],font = fnt,fill = (0,0,0))
