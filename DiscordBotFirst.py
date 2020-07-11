@@ -400,7 +400,7 @@ def create_board_image(game):
     dst.paste(images[3][1],(dst.width//2 - card_width//2, dst.height - card_height - 10))
     d = ImageDraw.Draw(dst)
     d.text((10,20),"Green Team Points:{}".format(game.points_green),fill = (0,0,0),font = fnt)
-    d.text((dst.width - 550,dst.height - 60),"Blue Team Points:{}".format(game.points_blue),fill = (0,0,0),font = fnt)
+    d.text((dst.width - 580,dst.height - 60),"Blue Team Points:{}".format(game.points_blue),fill = (0,0,0),font = fnt)
     d.text((10,dst.height // 2 - avatar_height//2 - 70),names[0],font = fnt,fill = (0,0,0))
     d.text((dst.width//2 + avatar_width//2 + 10,10), names[1],font = fnt,fill = (0,0,0))
     d.text((dst.width - avatar_width - 40,dst.height//2 - avatar_height//2 - 75), names[2],font = fnt,fill = (0,0,0))
