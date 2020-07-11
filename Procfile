@@ -1,1 +1,1 @@
-worker:python DiscordBotFirst.py
+worker: python DiscordBotFirst.py
