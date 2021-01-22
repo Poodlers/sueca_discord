@@ -1,14 +1,14 @@
 import os
 import random
 import asyncio
-from dotenv import load_dotenv
 from discord import *
 import requests
 from discord.ext import commands
 from PIL import Image, ImageDraw, ImageFont
 
-load_dotenv()
-TOKEN = os.getenv('DISCORD_TOKEN')
+
+TOKEN = "NzI0Mzk0NzgxMjQ1MTc3ODY2.Xu_jNg.xnRRuP3z7gnHaWr99Y383T1UkqA"
+
 
 #Embed declarations
 embed_next_player = Embed(title = "It's now your turn!", value = "Please play one of your cards!")
