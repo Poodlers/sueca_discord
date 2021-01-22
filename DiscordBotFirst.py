@@ -237,7 +237,7 @@ async def sueca(ctx):
         await channel.set_permissions(guild.default_role, overwrite=perm1)
         await channel.set_permissions(player.user, overwrite=perm2)
         await channel.set_permissions(guild.me, overwrite=perm3)
-        await channel.set_permissions(guild.owner, overwrite=perm1)
+        #await channel.set_permissions(guild.owner, overwrite=perm1)
         print("Created the new channel!")
         player.add_channel(channel)
         await channel.send("{}".format(player.user.mention))
