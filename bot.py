@@ -22,8 +22,8 @@ TOKEN = os.getenv("DISCORD_TOKEN")
 if not TOKEN:
     raise RuntimeError("Missing DISCORD_TOKEN environment variable.")
 
-BOT_DELAY = 1.2
-ROUND_DELAY = 2.5
+BOT_DELAY = 0.3
+ROUND_DELAY = 1.5
 ASSET_DIR: Final = Path("PNG")
 CARD_SUIT_TO_ASSET: Final = {"P": "C", "C": "H", "E": "S", "O": "D"}
 TRUMP_IMAGES: Final = {
