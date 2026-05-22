@@ -2,9 +2,6 @@ aiohappyeyeballs==2.6.2
 aiohttp==3.13.5
 aiosignal==1.4.0
 attrs==26.1.0
-audioop-lts==0.2.2
-cachetools==5.5.2
-certifi==2025.6.15
 charset-normalizer==3.4.2
 discord==2.3.2
 discord.py==2.7.1
